@@ -197,16 +197,6 @@ class ReaderTracker @Inject constructor(
 
     fun trackTag(
         stat: AnalyticsTracker.Stat,
-        tag: String
-    ) {
-        val properties = mutableMapOf<String, Any>(
-                TAG_KEY to tag
-        )
-        track(stat, properties)
-    }
-
-    fun trackTag(
-        stat: AnalyticsTracker.Stat,
         tag: String,
         source: String
     ) {
@@ -412,11 +402,32 @@ class ReaderTracker @Inject constructor(
         const val SOURCE_USER = "user"
         const val SOURCE_STATS = "stats"
         const val SOURCE_NOTIFICATION = "notification"
+        const val SOURCE_READER_LIKE_LIST = "reader_like_list"
+        const val SOURCE_READER_LIKE_LIST_USER_PROFILE = "reader_like_list_user_profile"
+        const val SOURCE_NOTIF_LIKE_LIST_USER_PROFILE = "notif_like_list_user_profile"
+        const val SOURCE_USER_PROFILE_UNKNOWN = "user_profile_source_unknown"
         const val SOURCE_ACTIVITY_LOG_DETAIL = "activity_log_detail"
 
         const val SOURCE_POST_LIST_SAVED_POST_NOTICE = "post_list_saved_post_notice"
 
         private const val UNKNOWN_VALUE = "unknown"
+
+        @JvmStatic
+        fun trackTag(
+            stat: AnalyticsTracker.Stat,
+            tag: String
+        ) {
+            val properties = mutableMapOf<String, Any>(
+                    TAG_KEY to tag
+            )
+            AnalyticsTracker.track(stat, properties)
+        }
+
+        fun isUserProfileSource(source: String): Boolean {
+            return (source == SOURCE_READER_LIKE_LIST_USER_PROFILE ||
+                    source == SOURCE_NOTIF_LIKE_LIST_USER_PROFILE ||
+                    source == SOURCE_USER_PROFILE_UNKNOWN)
+        }
     }
 }
 
