@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -341,6 +342,7 @@ public class AppPrefs {
     public static ReaderTag getReaderTag() {
         String tagName = getString(DeletablePrefKey.READER_TAG_NAME);
         if (TextUtils.isEmpty(tagName)) {
+            Log.i("AppPrefs", "***=> DeletablePrefKey.READER_TAG_NAME is null");
             return null;
         }
         int tagType = getInt(DeletablePrefKey.READER_TAG_TYPE);
@@ -362,7 +364,9 @@ public class AppPrefs {
     }
 
     public static void setReaderTag(ReaderTag tag) {
+        Log.i("AppPrefs", "***=> setReaderTag " + tag.getTagSlug());
         if (tag != null && !TextUtils.isEmpty(tag.getTagSlug())) {
+            Log.i("AppPrefs", "***=> update keys " + tag.getTagSlug());
             setString(DeletablePrefKey.READER_TAG_NAME, tag.getTagSlug());
             setInt(DeletablePrefKey.READER_TAG_TYPE, tag.tagType.toInt());
             setBoolean(
@@ -370,6 +374,7 @@ public class AppPrefs {
                     tag.isFollowedSites() || tag.isDefaultInMemoryTag()
             );
         } else {
+            Log.i("AppPrefs", "***=> remove keys");
             prefs().edit()
                    .remove(DeletablePrefKey.READER_TAG_NAME.name())
                    .remove(DeletablePrefKey.READER_TAG_TYPE.name())

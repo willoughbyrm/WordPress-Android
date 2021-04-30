@@ -3,6 +3,7 @@ package org.wordpress.android.ui.reader.utils;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -291,6 +292,7 @@ public class ReaderUtils {
     public static ReaderTag getDefaultTag() {
         ReaderTag defaultTag = getTagFromEndpoint(ReaderTag.TAG_ENDPOINT_DEFAULT);
         if (defaultTag == null) {
+            Log.i(ReaderUtils.class.getSimpleName(), "***=> set default in memory to following");
             defaultTag = getTagFromTagName(ReaderTag.TAG_TITLE_DEFAULT, ReaderTagType.DEFAULT, true);
         }
         return defaultTag;
@@ -333,7 +335,9 @@ public class ReaderUtils {
 
     public static Map<String, TagInfo> getDefaultTagInfo() {
         // Note that the following is the desired order in the tabs
-        // (see usage in prependDefaults)
+        // (see usage in prependDefaults)]
+        Log.i("ReaderUtils", "***=> getDefaultTagInfo");
+
         Map<String, TagInfo> defaultTagInfo = new LinkedHashMap<>();
 
         defaultTagInfo.put(ReaderConstants.KEY_FOLLOWING, new TagInfo(ReaderTagType.DEFAULT, ReaderTag.FOLLOWING_PATH));
@@ -397,6 +401,7 @@ public class ReaderUtils {
         ReaderTagList orderedTagList = new ReaderTagList();
         Map<String, ReaderTag> defaultTags = new HashMap<>();
 
+        Log.i("ReaderUtils", "***=> getOrderedTagsList ");
         for (ReaderTag tag : tagList) {
             if (defaultTagFoundAndAdded(defaultTagInfos, tag, defaultTags)) continue;
 

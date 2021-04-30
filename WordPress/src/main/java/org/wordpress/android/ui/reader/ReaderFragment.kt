@@ -1,6 +1,7 @@
 package org.wordpress.android.ui.reader
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -46,6 +47,7 @@ class ReaderFragment : Fragment(R.layout.reader_fragment_layout), ScrollableView
             viewModel.uiState.value?.let {
                 if (it is ContentUiState) {
                     val selectedTag = it.readerTagList[position]
+                    Log.i("ReaderFragment", "***=> raise onTagChanged " + selectedTag.tagSlug)
                     viewModel.onTagChanged(selectedTag)
                 }
             }

@@ -1,5 +1,6 @@
 package org.wordpress.android.ui.reader.usecases
 
+import android.util.Log
 import dagger.Reusable
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -21,6 +22,7 @@ class LoadReaderTabsUseCase @Inject constructor(
 ) {
     suspend fun loadTabs(): ReaderTagList {
         return withContext(bgDispatcher) {
+            Log.i("LoadReaderTabsUseCase", "***=> loadTabs");
             val tagList = ReaderTagTable.getDefaultTags()
 
             /* Creating custom tag lists isn't supported anymore. However, we need to keep the support here
@@ -31,6 +33,7 @@ class LoadReaderTabsUseCase @Inject constructor(
 
             // Add "Following" tab manually when on self-hosted site
             if (!tagList.containsFollowingTag()) {
+                Log.i("LoadReaderTabsUseCase", "***=> Create following tag manually");
                 tagList.add(readerUtilsWrapper.getDefaultTagFromDbOrCreateInMemory())
             }
 

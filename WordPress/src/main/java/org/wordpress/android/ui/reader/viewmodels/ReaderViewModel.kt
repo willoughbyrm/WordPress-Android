@@ -1,11 +1,11 @@
 package org.wordpress.android.ui.reader.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -41,7 +41,6 @@ class ReaderViewModel @Inject constructor(
     private val loadReaderTabsUseCase: LoadReaderTabsUseCase,
     private val readerTracker: ReaderTracker,
     private val accountStore: AccountStore
-        // todo: annnmarie removed this private val getFollowedTagsUseCase: GetFollowedTagsUseCase
 ) : ScopedViewModel(mainDispatcher) {
     private var initialized: Boolean = false
     private var wasPaused: Boolean = false
@@ -80,8 +79,10 @@ class ReaderViewModel @Inject constructor(
 
     private fun loadTabs() {
         launch {
+            Log.i(tag, "***=> loadTabs")
             val tagList = loadReaderTabsUseCase.loadTabs()
             if (tagList.isNotEmpty()) {
+                Log.i(tag, "***=> have tag list")
                 _uiState.value = ContentUiState(
                         tagList.map { it.label },
                         tagList,
@@ -90,23 +91,31 @@ class ReaderViewModel @Inject constructor(
                 )
                 if (!initialized) {
                     initialized = true
+                    Log.i(tag, "***=> Go initialize")
                     initializeTabSelection(tagList)
                 }
             }
         }
     }
 
+    private final val tag = "ReaderViewModel"
     private suspend fun initializeTabSelection(tagList: ReaderTagList) {
+        Log.i(tag, "***=> initializeTabSelection taglist count ${tagList.size}")
         withContext(bgDispatcher) {
             val selectTab = { it: ReaderTag ->
                 val index = tagList.indexOf(it)
+                Log.i(tag, "***=> initializeTabSelection index $index")
                 if (index != -1) {
+                    Log.i(tag, "***=> initializeTabSelection post value $index with ${it.tagSlug}")
                     _selectTab.postValue(Event(TabNavigation(index, smoothAnimation = false)))
                 }
             }
+            Log.i(tag, "***=> initializeTabSelection check appPrefsWrapper")
             appPrefsWrapper.getReaderTag()?.let {
+                Log.i(tag, "***=> initializeTabSelection appPrefsWrapper not null "+ it.tagSlug)
                 selectTab.invoke(it)
             } ?: tagList.find { it.isDefaultSelectedTab() }?.let {
+                Log.i(tag, "***=> initializeTabSelection isDefaultSelectedTab ${it.tagSlug}")
                 selectTab.invoke(it)
             }
         }
@@ -192,6 +201,7 @@ class ReaderViewModel @Inject constructor(
 
     @Subscribe(threadMode = MAIN)
     fun onTagsUpdated(event: ReaderEvents.FollowedTagsChanged) {
+        Log.i(tag, "***=> Go kick off loadTabs again")
         loadTabs()
     }
 
